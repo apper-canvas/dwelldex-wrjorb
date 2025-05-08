@@ -16,6 +16,8 @@ export default function MainFeature({ viewMode }) {
   const [properties, setProperties] = useState([]);
   const [filteredProperties, setFilteredProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState([]);
   
   // Define icon components
@@ -33,6 +35,9 @@ export default function MainFeature({ viewMode }) {
   const FilterIcon = getIcon('Filter');
   const MapIcon = getIcon('Map');
   const CompassIcon = getIcon('Compass');
+  const CalendarIcon = getIcon('Calendar');
+  const XIcon = getIcon('X');
+  const PhoneIcon = getIcon('Phone');
   
   // Mock properties data
   useEffect(() => {
@@ -246,6 +251,28 @@ export default function MainFeature({ viewMode }) {
     return status === 'for-rent'
       ? `$${price.toLocaleString()}/month`
       : `$${price.toLocaleString()}`;
+  };
+  
+  const openPropertyDetails = (property) => {
+    setSelectedProperty(property);
+    setIsModalOpen(true);
+    // Accessibility: prevent background scrolling when modal is open
+    document.body.style.overflow = 'hidden';
+  };
+  
+  const closePropertyDetails = () => {
+    setIsModalOpen(false);
+    // Restore scrolling
+    document.body.style.overflow = 'auto';
+    
+    // Reset selected property after animation completes
+    setTimeout(() => {
+      setSelectedProperty(null);
+    }, 300);
+  };
+  
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) closePropertyDetails();
   };
   
   return (
@@ -483,7 +510,7 @@ export default function MainFeature({ viewMode }) {
                       <div className="p-4 pt-0">
                         <button 
                           className="w-full btn-outline"
-                          onClick={() => toast.info(`Viewing details for ${property.title}`)}
+                          onClick={() => openPropertyDetails(property)}
                         >
                           View Details
                         </button>
@@ -558,6 +585,144 @@ export default function MainFeature({ viewMode }) {
           </button>
         </div>
       )}
+      
+      {/* Property Details Modal */}
+      <AnimatePresence>
+        {isModalOpen && selectedProperty && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={handleBackdropClick}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", duration: 0.3 }}
+              className="bg-white dark:bg-surface-800 rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="relative h-64 sm:h-80 overflow-hidden">
+                <img 
+                  src={selectedProperty.image} 
+                  alt={selectedProperty.title} 
+                  className="w-full h-full object-cover"
+                />
+                <button
+                  onClick={closePropertyDetails}
+                  className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/80 dark:bg-surface-800/80 hover:bg-white dark:hover:bg-surface-800 shadow-md transition-colors"
+                  aria-label="Close details"
+                >
+                  <XIcon className="h-6 w-6 text-surface-800 dark:text-white" />
+                </button>
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                  <div className="inline-flex items-center px-2 py-1 rounded-md text-sm font-medium text-white capitalize mb-2">
+                    {selectedProperty.status === 'for-rent' ? (
+                      <span className="bg-secondary px-2 py-0.5 rounded-md">For Rent</span>
+                    ) : (
+                      <span className="bg-accent px-2 py-0.5 rounded-md">For Sale</span>
+                    )}
+                  </div>
+                  <h2 className="text-white font-bold text-2xl text-shadow-sm">{selectedProperty.title}</h2>
+                  <div className="flex items-center text-white/90 mt-1">
+                    <MapPinIcon className="h-4 w-4 mr-1" />
+                    <span>{selectedProperty.address.street}, {selectedProperty.address.city}, {selectedProperty.address.state} {selectedProperty.address.zipCode}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="overflow-y-auto max-h-[calc(90vh-20rem)] p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+                  <div className="font-bold text-2xl text-primary dark:text-primary-light">
+                    {formatPrice(selectedProperty.price, selectedProperty.status)}
+                  </div>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => toggleFavorite(selectedProperty.id)}
+                      className="btn-outline flex items-center gap-2"
+                    >
+                      {favoriteIds.includes(selectedProperty.id) ? (
+                        <>
+                          <HeartFilledIcon className="h-5 w-5 text-red-500" />
+                          <span>Saved</span>
+                        </>
+                      ) : (
+                        <>
+                          <HeartIcon className="h-5 w-5" />
+                          <span>Save</span>
+                        </>
+                      )}
+                    </button>
+                    <button 
+                      className="btn-primary flex items-center gap-2"
+                      onClick={() => toast.success("Contact request sent!")}
+                    >
+                      <PhoneIcon className="h-5 w-5" />
+                      <span>Contact Agent</span>
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <div className="flex flex-col items-center p-4 bg-surface-50 dark:bg-surface-700 rounded-lg">
+                    <BedDoubleIcon className="h-6 w-6 text-primary mb-2" />
+                    <span className="font-semibold text-lg">{selectedProperty.bedrooms}</span>
+                    <span className="text-surface-500 dark:text-surface-400 text-sm">{selectedProperty.bedrooms === 1 ? 'Bedroom' : 'Bedrooms'}</span>
+                  </div>
+                  <div className="flex flex-col items-center p-4 bg-surface-50 dark:bg-surface-700 rounded-lg">
+                    <BathIcon className="h-6 w-6 text-primary mb-2" />
+                    <span className="font-semibold text-lg">{selectedProperty.bathrooms}</span>
+                    <span className="text-surface-500 dark:text-surface-400 text-sm">{selectedProperty.bathrooms === 1 ? 'Bathroom' : 'Bathrooms'}</span>
+                  </div>
+                  <div className="flex flex-col items-center p-4 bg-surface-50 dark:bg-surface-700 rounded-lg">
+                    <RulerIcon className="h-6 w-6 text-primary mb-2" />
+                    <span className="font-semibold text-lg">{selectedProperty.area}</span>
+                    <span className="text-surface-500 dark:text-surface-400 text-sm">Square Feet</span>
+                  </div>
+                </div>
+                
+                <p className="mb-6 text-surface-700 dark:text-surface-300">{selectedProperty.description}</p>
+                
+                <div className="border-t border-surface-200 dark:border-surface-700 pt-6">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2"><HomeIcon className="h-5 w-5 text-primary" /> Property Information</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex items-center gap-2">
+                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <HomeIcon className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <span className="block text-sm text-surface-500 dark:text-surface-400">Property Type</span>
+                        <span className="font-medium capitalize">{selectedProperty.type}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <CalendarIcon className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <span className="block text-sm text-surface-500 dark:text-surface-400">Year Built</span>
+                        <span className="font-medium">{selectedProperty.yearBuilt}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-4 border-t border-surface-200 dark:border-surface-700 flex justify-end">
+                <button
+                  onClick={closePropertyDetails}
+                  className="btn-outline"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
