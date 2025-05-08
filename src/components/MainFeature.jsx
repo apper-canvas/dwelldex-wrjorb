@@ -368,8 +368,9 @@ export default function MainFeature({ viewMode }) {
                 <option value="2000-5000">$2,000 - $5,000</option>
                 <option value="5000-10000">$5,000 - $10,000</option>
                <option value="5000-10000">$5,000 - $10,000</option>
+               <option value="10000-100000">$10,000+</option>
               </select>
-            
+            </div>
             <div>
               <label htmlFor="bedrooms" className="label">
                 <div className="flex items-center gap-1.5">
@@ -377,7 +378,7 @@ export default function MainFeature({ viewMode }) {
                   <span>Bedrooms</span>
                 </div>
           </div>
-              <select
+              </label>
                 id="bedrooms"
                 name="bedrooms"
                 value={filters.bedrooms}
