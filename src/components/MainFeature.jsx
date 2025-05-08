@@ -367,18 +367,17 @@ export default function MainFeature({ viewMode }) {
                 <option value="0-2000">Up to $2,000</option>
                 <option value="2000-5000">$2,000 - $5,000</option>
                 <option value="5000-10000">$5,000 - $10,000</option>
-                <option value="5000-10000">$5,000 - $10,000</option>
               </select>
+            </div>
             </div>
             <div>
               <label htmlFor="bedrooms" className="label">
                 <div className="flex items-center gap-1.5">
                   <BedDoubleIcon className="h-4 w-4" />
                   <span>Bedrooms</span>
-              </label>
                 </div>
               </label>
-              </label>
+              <select
                 name="bedrooms"
                 value={filters.bedrooms}
                 onChange={handleFilterChange}
