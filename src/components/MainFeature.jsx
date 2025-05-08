@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import getIcon from '../utils/iconUtils';
+import AddPropertyForm from './AddPropertyForm';
+
 
 export default function MainFeature({ viewMode }) {
   // State for filter and properties
@@ -19,6 +21,7 @@ export default function MainFeature({ viewMode }) {
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState([]);
+  const [isAddPropertyModalOpen, setIsAddPropertyModalOpen] = useState(false);
   
   // Define icon components
   const HomeIcon = getIcon('Home');
@@ -38,6 +41,7 @@ export default function MainFeature({ viewMode }) {
   const CalendarIcon = getIcon('Calendar');
   const XIcon = getIcon('X');
   const PhoneIcon = getIcon('Phone');
+  const PlusIcon = getIcon('Plus');
   
   // Mock properties data
   useEffect(() => {
@@ -246,6 +250,18 @@ export default function MainFeature({ viewMode }) {
       }
     });
   };
+
+  const handleAddProperty = (newProperty) => {
+    // Add the new property to the beginning of the properties array
+    setProperties(prevProperties => [newProperty, ...prevProperties]);
+    setFilteredProperties(prevFiltered => [newProperty, ...prevFiltered]);
+  };
+
+  const openAddPropertyModal = () => {
+    setIsAddPropertyModalOpen(true);
+    // Prevent background scrolling
+    document.body.style.overflow = 'hidden';
+  };
   
   const formatPrice = (price, status) => {
     return status === 'for-rent'
@@ -351,8 +367,9 @@ export default function MainFeature({ viewMode }) {
                 <option value="0-2000">Up to $2,000</option>
                 <option value="2000-5000">$2,000 - $5,000</option>
                 <option value="5000-10000">$5,000 - $10,000</option>
-                <option value="10000-">$10,000+</option>
-              </select>
+          </div> 
+
+          <div className="flex justify-between items-center mt-5">
             </div>
             
             <div>
@@ -361,6 +378,15 @@ export default function MainFeature({ viewMode }) {
                   <BedDoubleIcon className="h-4 w-4" />
                   <span>Bedrooms</span>
                 </div>
+          </div>
+
+          <div className="mt-5">
+            <button
+              onClick={openAddPropertyModal}
+              className="btn-secondary flex items-center justify-center gap-2">
+              <PlusIcon className="h-5 w-5" />
+              <span>Add Property</span>
+            </button>
               </label>
               <select
                 id="bedrooms"
@@ -584,6 +610,18 @@ export default function MainFeature({ viewMode }) {
             Load More Properties
           </button>
         </div>
+
+      {/* Add Property Modal */}
+      <AnimatePresence>
+        {isAddPropertyModalOpen && (
+          <AddPropertyForm 
+            onClose={() => {
+              setIsAddPropertyModalOpen(false);
+              document.body.style.overflow = 'auto';
+            }}
+            onAddProperty={handleAddProperty} />
+        )}
+      </AnimatePresence>
       )}
       
       {/* Property Details Modal */}

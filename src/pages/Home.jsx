@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import MainFeature from '../components/MainFeature';
 import getIcon from '../utils/iconUtils';
+
+
 
 export default function Home() {
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'map'
@@ -13,6 +15,7 @@ export default function Home() {
   const HomeIcon = getIcon('Home');
   const InfoIcon = getIcon('Info');
   const CompassIcon = getIcon('Compass');
+  const PlusIcon = getIcon('Plus');
   const SearchIcon = getIcon('Search');
   
   const containerVariants = {
@@ -45,6 +48,13 @@ export default function Home() {
       icon: mode === 'grid' ? <GridIcon className="h-5 w-5" /> : <MapIcon className="h-5 w-5" />,
     });
   };
+  
+  // Reference to the MainFeature component to trigger the add property modal
+  const mainFeatureRef = useRef();
+  
+  const handleAddPropertyClick = () => {
+    window.scrollTo({ top: document.querySelector('.card.overflow-visible').offsetTop - 100, behavior: 'smooth' });
+  };
 
   return (
     <div className="space-y-6">
@@ -73,7 +83,7 @@ export default function Home() {
               </button>
               <button 
                 className="btn bg-transparent border-2 border-white hover:bg-white/10 focus:ring-white flex items-center justify-center"
-                onClick={() => toast.info("You'll be able to list your property soon!")}
+                onClick={handleAddPropertyClick}
               >
                 <HomeIcon className="mr-2 h-5 w-5" />
                 <span>List Your Property</span>
@@ -84,7 +94,10 @@ export default function Home() {
       </section>
 
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-surface-800 dark:text-surface-100">Featured Properties</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-surface-800 dark:text-surface-100">Featured Properties</h2>
+          <span className="text-surface-500 dark:text-surface-400 text-sm">(Add your own properties!)</span>
+        </div>
         
         <div className="flex items-center space-x-2 bg-surface-100 dark:bg-surface-800 p-1 rounded-lg">
           <button
