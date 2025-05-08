@@ -410,6 +410,7 @@ export default function MainFeature({ viewMode }) {
                 <option value="for-rent">For Rent</option>
               </select>
             </div>
+          </form>
           </div>
           
           <div className="mt-5">
