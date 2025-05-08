@@ -367,8 +367,7 @@ export default function MainFeature({ viewMode }) {
                 <option value="0-2000">Up to $2,000</option>
                 <option value="2000-5000">$2,000 - $5,000</option>
                 <option value="5000-10000">$5,000 - $10,000</option>
-               <option value="5000-10000">$5,000 - $10,000</option>
-               <option value="10000-100000">$10,000+</option>
+                <option value="5000-10000">$5,000 - $10,000</option>
               </select>
             </div>
             <div>
@@ -377,9 +376,9 @@ export default function MainFeature({ viewMode }) {
                   <BedDoubleIcon className="h-4 w-4" />
                   <span>Bedrooms</span>
               </label>
-              <select
+                </div>
               </label>
-                id="bedrooms"
+              </label>
                 name="bedrooms"
                 value={filters.bedrooms}
                 onChange={handleFilterChange}
