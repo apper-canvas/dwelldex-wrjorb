@@ -367,10 +367,8 @@ export default function MainFeature({ viewMode }) {
                 <option value="0-2000">Up to $2,000</option>
                 <option value="2000-5000">$2,000 - $5,000</option>
                 <option value="5000-10000">$5,000 - $10,000</option>
-          </div> 
-
-          <div className="flex justify-between items-center mt-5">
-            </div>
+               <option value="5000-10000">$5,000 - $10,000</option>
+              </select>
             
             <div>
               <label htmlFor="bedrooms" className="label">
@@ -379,15 +377,6 @@ export default function MainFeature({ viewMode }) {
                   <span>Bedrooms</span>
                 </div>
           </div>
-
-          <div className="mt-5">
-            <button
-              onClick={openAddPropertyModal}
-              className="btn-secondary flex items-center justify-center gap-2">
-              <PlusIcon className="h-5 w-5" />
-              <span>Add Property</span>
-            </button>
-              </label>
               <select
                 id="bedrooms"
                 name="bedrooms"
