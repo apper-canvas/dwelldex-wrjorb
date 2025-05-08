@@ -411,7 +411,7 @@ export default function MainFeature({ viewMode }) {
               </select>
             </div>
           </form>
-          </div>
+          </form>
           
           <div className="mt-5">
             <button
