@@ -412,6 +412,7 @@ export default function MainFeature({ viewMode }) {
             </div>
           </form>
           </form>
+        </motion.div>
           
           <div className="mt-5">
             <button
